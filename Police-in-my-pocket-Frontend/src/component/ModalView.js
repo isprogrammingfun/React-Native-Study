@@ -1,5 +1,5 @@
 import React, {useState, useRef} from 'react';
-import {StyleSheet, Text, View, Pressable, Modal, Button, TouchableOpacity} from 'react-native';
+import {StyleSheet, Text, View, Pressable, Modal, TouchableOpacity} from 'react-native';
 
 /*const destination1 = {
   latitude: 37.602226, 

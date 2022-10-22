@@ -185,6 +185,9 @@ const App = () => {
       </View>
       <View>
         <RadioForm
+          style={{
+            marginLeft: '3%'
+          }}
           radio_props={gender}
           initial={0}
           onPress={value => {}}
@@ -194,7 +197,7 @@ const App = () => {
           labelStyle={{
             fontSize: 15,
             fontFamily: 'GmarketSansTTFMedium',
-            marginLeft: 30,
+            marginLeft: '10%',
           }}
           disable={true}
           formHorizontal={true}
@@ -275,7 +278,7 @@ const styles = StyleSheet.create({
     fontFamily: 'GmarketSansTTFMedium',
   },
   textInput: {
-    margin: 10,
+    margin: '2%',
     borderRadius: 20,
     backgroundColor: '#bdd2ff',
     fontFamily: 'GmarketSansTTFMedium',
@@ -286,16 +289,16 @@ const styles = StyleSheet.create({
   submitButton: {
     backgroundColor: '#043BFF',
     borderRadius: 20,
-    padding: 10,
-    margin: 15,
+    padding: '3%',
+    margin: '5%',
     alignItems: 'center',
     fontFamily: 'GmarketSansTTFMedium',
   },
   radio: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    marginRight: 10,
+    marginBottom: '5%',
+    marginRight: '5%',
   },
   submitButtonText: {
     color: 'white',

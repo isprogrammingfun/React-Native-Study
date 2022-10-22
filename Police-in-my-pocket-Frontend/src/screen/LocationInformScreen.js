@@ -111,31 +111,32 @@ const MapExample = ({navigation}) => {
           <Text style={{
               fontFamily:'GmarketSansTTFMedium',
               color: 'white',
-              marginTop: 10,
+              marginTop: '4%',
               fontSize: 13,
-              marginLeft: 240
+              marginLeft: '60%'
             }}>OOO님, 환영합니다.</Text>
           <View style={{flexDirection: 'row'}}>
             <Text style={{
                 fontFamily:'GmarketSansTTFMedium',
                 color: 'white',
-                marginTop: 5,
+                marginTop: '1%',
                 fontSize: 10,
-                marginLeft: 241
+                marginLeft: '60%'
             }}>로그아웃 </Text>
             <Text style={{
                 fontFamily:'GmarketSansTTFMedium',
                 color: 'white',
-                marginTop: 5,
+                marginTop: '1%',
                 fontSize: 10,
             }}>마이페이지</Text>
           </View>
         </View>
         <Image source={require('../../assets/imgs/user2.png')}
           style={{
-            width: 30,
-            height: 30,
-            marginTop: 10
+            width: '5%',
+            height: '55%',
+            marginTop: '4%',
+            marginLeft: -15
           }}></Image>
       </View>
       <ViewContainerMap>

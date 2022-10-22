@@ -1,43 +1,43 @@
 import React, { useEffect, useRef, useState } from "react";
-import {Text, Pressable, StyleSheet, Alert} from 'react-native';
-import Sound from 'react-native-sound';
-
-let controlLocal;
-let localSound = require('../../assets/sounds/siren.mp3');
-
-const playSound_Local = () => {
- controlLocal = new Sound(localSound, (error, _sound) => {
-   if (error) {
-     alert('error' + error.message);
-     return;
-   }
-   controlLocal.play(() => {
-     controlLocal.release();
-   });
- });
-}
-
-const stopSound_Local = () => { 
-    controlLocal.stop(() => {
-      controlLocal.setVolume(0.0);
-      console.log('Stop Playing...');
-    });
-}
+import {Text, Pressable, StyleSheet, Modal, View, Image} from 'react-native';
+import { color } from "react-native-reanimated";
 
 const MyButton = () => {
-    //화면 켜지자 마자 7초 세서 alert (그 전에 sound 재생 안 시키면 stopSound에서 오류남..) 엉터리 그자체
-/*     useEffect(() => {
-        setTimeout(() => {
-          stopSound_Local();
-          Alert.alert('알림', '7초 경과');
-        }, 7000);
-      }, []); */
+  const [modalOpen, setModalOpen] = useState(false);
 
     return (
         <Pressable style={styles.button}
-            onPress={() => {playSound_Local(); this.timer();}}
+            onPress={() => {setModalOpen(true)}}
         >
             <Text style={styles.buttonText}>START</Text>
+            <Modal visible={modalOpen}
+            animationType={"fade"}
+            transparent={true}
+            style={styles.modalBox}
+            onRequestClose={() => { //backbutton으로 modal을 닫는 기능
+            setModalOpen(false);
+            }}>
+            <View style={styles.modalBox}>
+              <View style={styles.modalContent}>
+                <View style={{flexDirection: 'row', width: 300}}>
+                  <Pressable style={styles.btn} onPress={() => setModalOpen(false)}>
+                  <Text style={styles.modalText}>닫기</Text>
+                  </Pressable>
+                </View>
+                <View style={{height: 300, width: 300, alignItems: 'center'}}>
+                  <Text style={{fontSize: 20, marginTop: 10, fontFamily: 'GmarketSansTTFMedium'}}>백그라운드 앱이 실행중입니다</Text>
+                  <Image
+                      source={require('../../assets/imgs/loading.png')}
+                      style={{
+                        width: 60,
+                        height: 60,
+                        marginTop: 10,
+                      }}
+                    />
+                  </View>
+              </View>
+            </View>
+            </Modal>
         </Pressable>
     )
 }
@@ -57,7 +57,38 @@ const styles = StyleSheet.create({
         marginTop: 3,
         marginBottom: 3,
         fontFamily: 'GmarketSansTTFMedium',
-      }
+      },
+      btn: {
+        alignItems: 'center',
+        backgroundColor: '#043BFF',
+        padding: 10,
+        borderRadius:27,
+        width: 75,
+        height: 40,
+        marginTop: 10,
+        marginBottom: 8,
+        marginLeft: 225
+      },
+      modalBox: {
+        margin: 0,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'rgba(102, 102, 102, 0.8)'
+      },
+      modalContent: {
+        width: '90%',
+        height: '60%',
+        alignItems: 'center',
+        borderRadius: 10,
+        overflow: 'hidden',
+        backgroundColor: '#FFFFFF'
+      },
+      modalText: {
+          fontSize: 15,
+          color: '#FFFFFF',
+          marginTop: 3,
+          fontFamily: 'GmarketSansTTFMedium'},  
   });
 
 export default MyButton;

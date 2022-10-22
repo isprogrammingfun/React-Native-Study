@@ -1,15 +1,60 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
-    StyleSheet,
-    View
+    StyleSheet, View, TouchableOpacity, Image, Text
 } from 'react-native';
+import Geolocation from 'react-native-geolocation-service';
+import { PermissionsAndroid } from 'react-native';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
-function SearchBar2() {
+async function requestPermission() {
+    try {
+      if (Platform.OS === "ios") {
+        return await Geolocation.requestAuthorization("always");
+      }
+      // 안드로이드 위치 정보 수집 권한 요청
+      if (Platform.OS === "android") {
+        return await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+const SearchBar2 = ({reg2, getData2}) => {
+    const [location, setLocation] = useState();
     const ref = useRef();
+
     useEffect(() => {
+        requestPermission().then(result => {
+            console.log({ result });
+            if (result === "granted") {
+              Geolocation.getCurrentPosition(
+                pos => {
+                  setLocation(pos.coords);
+                },
+                error => {
+                  console.log(error);
+                },
+                {
+                  enableHighAccuracy: true,
+                  timeout: 3600,
+                  maximumAge: 3600,
+                },
+              );
+            }
+          });
         ref.current?.setAddressText('');
     }, []);
+
+    if (!location) {
+        return (
+          <View>
+            <Text>Splash Screen</Text>
+          </View>
+        );
+      }
 
     return (
         <View style={[styles.block, {width: '90%'}, {height: '50%'}, {marginEnd:'6%'}]}>
@@ -18,23 +63,49 @@ function SearchBar2() {
                 minLength={2}
                 returnKeyType={'search'}
                 fetchDetails={true}
-                GooglePlacesSearchQuery={{
-                    rankby: "distance"
-                }}
-                ref={ref}
+                ref={input => { this.textInput = input }}
+                renderRightButton={() => (
+                  <TouchableOpacity onPress={() => {
+                    this.textInput.clear();
+                    getData2({
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                  })
+                    } }>
+                    <Image
+                      source={require('../../assets/imgs/clear1.png')}
+                      style={{
+                        width: 24,
+                        height: 24,
+                        marginTop: 10,
+                        marginLeft: 3,
+                      }}></Image>
+                  </TouchableOpacity>
+                )}
                 autoFocus={false}
                 nearbyPlacesAPI='GooglePlacesSearch'
                 onPress={(data, details = null) => {
                     // 'details' is provided when fetchDetails = true
-                    console.log(data.description);
+                    console.log(data.description);  //한글 주소
+                    console.log(details.geometry.location.lat); //위도 추출
+                    console.log(details.geometry.location.lng); //경도 추출
+
+                    getData2({
+                      latitude: details.geometry.location.lat,
+                      longitude: details.geometry.location.lng,
+                      latitudeDelta: 0.011,
+                      longitudeDelta: 0.011
+                  })
                 }}
                 listViewDisplayed={false}
                 query={{
                     key: 'AIzaSyAx0vC5rUuV7PT72y03BDwK79Yu2ByP3Hw',
                     language: 'ko',
-                    components: 'country:kor'
+                    components: 'country:kor',
+                    rankby: 'distance',
+                    radius: 420,
+                    location: `${location.latitude}, ${location.longitude}`
                 }}
-                //renderDescription={(data) => console.log(data.description)}
                 renderDescription={row => row.description}
                 styles={{
                     listView: {
@@ -65,5 +136,4 @@ const styles = StyleSheet.create({
         fontFamily: 'GmarketSansTTFMedium',
     },
 });
-
-export default  SearchBar2;
+export default SearchBar2;

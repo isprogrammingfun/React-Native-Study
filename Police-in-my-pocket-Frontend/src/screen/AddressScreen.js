@@ -10,19 +10,19 @@ import {
   Linking
 } from 'react-native';
 import {Dimensions, Image, ImageBackground,} from 'react-native';
-import Button_address from './src/component/Button_address';
+import Button_address from '../component/Button_address';
 
 var {width} = Dimensions.get('window');
 
 const AddressApp = () => {
 
   return (     
-    <View style = {styles.container}>a
+    <View style = {styles.container}>
       <View style = {styles.header}>
         <Text style = {styles.title}>
           {"\r"}주요 연락처 등록{"\r"}
           <TouchableHighlight onPress={() =>Linking.openURL('https://www.google.co.kr/')}>
-            <Image style ={{ width: 30, height: 30, alignSelf: 'flex-end'}} source = {require('./assets/imgs/user.png')}/>
+            <Image style ={{width: 30, height: 30, alignSelf: 'flex-end'}} source = {require('../../assets/imgs/user.png')}/>
           </TouchableHighlight>
           {"\n\n\n"}
           </Text>

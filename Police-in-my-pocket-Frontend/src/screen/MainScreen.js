@@ -1,13 +1,12 @@
 import React, {useEffect, useState, useRef} from 'react';
-import {StyleSheet, Text, View, Image, Keyboard } from 'react-native';
-import MapView, {Circle, Marker, PROVIDER_GOOGLE} from 'react-native-maps';
+import {StyleSheet, Text, View, Image, Keyboard, TouchableOpacity } from 'react-native';
+import MapView, {Circle, Marker, Directions, PROVIDER_GOOGLE, Polyline} from 'react-native-maps';
 import Geolocation from 'react-native-geolocation-service';
 import { PermissionsAndroid } from 'react-native';
 import MyButton from '../component/MyButton';
 import ModalView from '../component/ModalView';
 import SearchBar1 from '../component/SearchBar1';
 import SearchBar2 from '../component/SearchBar2';
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
 
 async function requestPermission() {
   try {
@@ -25,23 +24,47 @@ async function requestPermission() {
   }
 }
 
-const MainScreen = ({navigation}) => {
-  const [modalOpen, setModalOpen] = useState(false);
+const MainScreen = () => {
   const [location, setLocation] = useState();
-  const [region1, setRegion1] = React.useState({
-    latitude: 37,
-    longitude: 127,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01
-})
-  const [region2, setRegion2] = React.useState({
+  const ref = useRef();
+  const [reg1, setReg1] = React.useState({
     latitude: 37,
     longitude: 127,
     latitudeDelta: 0.01,
     longitudeDelta: 0.01
   })
-  const ref = useRef();
-  
+  const [reg2, setReg2] = React.useState({
+    latitude: 37,
+    longitude: 127,
+    latitudeDelta: 0.01,
+    longitudeDelta: 0.01
+  })
+  const [reg3, setReg3] = React.useState({
+    address: '서울특별시 성북구 하월곡동 222'
+  })
+  const [reg4, setReg4] = React.useState({
+    address: '서울특별시 성북구 하월곡동 222'
+  })
+  const [curr, setCurr] = React.useState({
+    address: ''
+  })
+
+  const getData = (reg1) => {
+    setReg1(reg1);
+  }
+
+  const getData2 = (reg2) => {
+    setReg2(reg2);
+  }
+
+  const getAddress = (reg3) => {
+    setReg3(reg3);
+  }
+
+  const getAddress2 = (reg4) => {
+    setReg4(reg4);
+  }
+
 useEffect(() => {
   requestPermission().then(result => {
     console.log({ result });
@@ -49,8 +72,8 @@ useEffect(() => {
       Geolocation.getCurrentPosition(
         pos => {
           setLocation(pos.coords);
-          setRegion1(pos.coords);
-          setRegion2(pos.coords);
+          setReg1(pos.coords);
+          setReg2(pos.coords);
           console.log(pos.coords.latitude);
           console.log(pos.coords.longitude);
         },
@@ -67,8 +90,6 @@ useEffect(() => {
   });
   ref.current?.setAddressText('');
 }, []);
-
-
 
 if (!location) {
   return (
@@ -99,97 +120,13 @@ if (!location) {
       </View>
 
       <View style={{ width: '90%', }}>
-        <ModalView />
+        <ModalView /*reg1={reg1} getData={getData} reg2={reg2} getData2={getData2} */
+        reg3={reg3} getAddress={getAddress} getAddress2={getAddress2}/>
       </View>
-  
+    
       <View style={styles.content1}>
-      <View style={[styles.block, {width: '90%'}, {height: '63%'}, {marginEnd:'6%'}]} >
-          <GooglePlacesAutocomplete
-                placeholder='▽ 출발지를 입력하세요'
-                minLength={2}
-                returnKeyType={'search'}
-                fetchDetails={true}
-                ref={ref}
-                autoFocus={false}
-                nearbyPlacesAPI='GooglePlacesSearch'
-                onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log(data.description);  //한글 주소
-                    console.log(details.geometry.location.lat); //위도 추출
-                    console.log(details.geometry.location.lng); //경도 추출
-
-                    setRegion1({
-                        latitude: details.geometry.location.lat,
-                        longitude: details.geometry.location.lng,
-                        latitudeDelta: 0.011,
-                        longitudeDelta: 0.011
-                    })
-                }}
-                listViewDisplayed={false}
-                query={{
-                    key: 'AIzaSyAx0vC5rUuV7PT72y03BDwK79Yu2ByP3Hw',
-                    language: 'ko',
-                    components: 'country:kor',
-                    rankby: 'distance',
-                    radius: 420,
-                    location: `${location.latitude}, ${location.longitude}`
-                }}
-                renderDescription={row => row.description}
-                styles={{
-                    listView: {
-                        position: 'absolute',
-                        b4ckgroundColor: "white",
-                        width: '100%',
-                        zIndex: 9999,
-                        marginTop: 45
-                    }
-                  }}
-            />  
-        </View>
-        <View style={[styles.block, {width: '90%'}, {height: '63%'}, {marginEnd:'6%'}, {paddingBottom: 40}]}>
-            <GooglePlacesAutocomplete
-                placeholder='▽ 도착지를 입력하세요'
-                minLength={2}
-                returnKeyType={'search'}
-                fetchDetails={true}
-                ref={ref}
-                autoFocus={false}
-                nearbyPlacesAPI='GooglePlacesSearch'
-                onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log(data.description);  //한글 주소
-                    console.log(details.geometry.location.lat); //위도 추출
-                    console.log(details.geometry.location.lng); //경도 추출
-
-                    setRegion2({
-                      latitude: details.geometry.location.lat,
-                      longitude: details.geometry.location.lng,
-                      latitudeDelta: 0.011,
-                      longitudeDelta: 0.011
-                  })
-                }}
-                listViewDisplayed={false}
-                query={{
-                    key: 'AIzaSyAx0vC5rUuV7PT72y03BDwK79Yu2ByP3Hw',
-                    language: 'ko',
-                    components: 'country:kor',
-                    rankby: 'distance',
-                    radius: 420,
-                    location: `${location.latitude}, ${location.longitude}`
-                }}
-                //renderDescription={(data) => console.log(data.description)}
-                renderDescription={row => row.description}
-                styles={{
-                    listView: {
-                        position: 'absolute',
-                        b4ckgroundColor: "white",
-                        width: '100%',
-                        zIndex: 9999,
-                        marginTop: 45
-                    }
-                  }}
-            />  
-        </View>
+        <SearchBar1 reg1={reg1} getData={getData} reg4={reg3.address} curr={curr}/>
+        <SearchBar2 reg2={reg2} getData2={getData2} />
       </View>
 
       <View style={styles.content}>
@@ -211,20 +148,21 @@ if (!location) {
             longitudeDelta: 0.011,
           }} 
           region={{
-            latitude: (region1.latitude + region2.latitude) / 2,
-            longitude: (region1.longitude + region2.longitude) / 2,
+            latitude: (reg1.latitude + reg2.latitude) / 2,
+            longitude: (reg1.longitude + reg2.longitude) / 2,
             latitudeDelta: 0.011,
             longitudeDelta:0.011
           }}
           >
           <Marker
-            coordinate={{latitude: region1.latitude, longitude: region1.longitude}} 
-            //title={"출발지 위치"}
+            coordinate={{latitude: reg1.latitude, longitude: reg1.longitude}}
+            //모달창에서 보낸 한글 주소 메인에서 읽어들이기
+            title={reg3.address}
             >
               <Image source={require('../../assets/imgs/placeholder.png')} style={{ width: 40, height: 40 }}></Image>
           </Marker>
           <Marker
-            coordinate={{latitude: region2.latitude, longitude: region2.longitude}}
+            coordinate={{latitude: reg2.latitude, longitude: reg2.longitude}}
             //title={"도착지 위치"}
              >
               <Image source={require('../../assets/imgs/placeholder_safe.png')} style={{ width: 40, height: 40 }}></Image>
@@ -238,13 +176,14 @@ if (!location) {
                   + '&key=AIzaSyAx0vC5rUuV7PT72y03BDwK79Yu2ByP3Hw' + '&language=ko')
                 .then((response) => response.json())
                 .then((responseJson) => {
+                  curr.address = responseJson.results[0].formatted_address;
                   console.log(responseJson.results[0].formatted_address);
                 }).catch((err) => console.log("udonPeople error : " + err));
               }}>
                 <Image source={require('../../assets/imgs/placeholder_danger.png')} style={{ width: 40, height: 40 }}></Image>
           </Marker>
           <Circle
-            center={{latitude: (region1.latitude + region2.latitude) / 2, longitude: (region1.longitude + region2.longitude) / 2}}
+            center={{latitude: (reg1.latitude + reg2.latitude) / 2, longitude: (reg1.longitude + reg2.longitude) / 2}}
             radius={500}
             fillColor='rgba(0,94,255,0.09)'
             strokeColor='rgba(0,94,255,0)'
@@ -279,7 +218,6 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
     height: '5%',
-    //backgroundColor: 'blue',
     alignSelf: 'flex-start',
     alignItems: 'center',
     justifyContent: 'center',
@@ -289,7 +227,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   content1: {
-    //backgroundColor: 'green',
     width: '100%',
     height: '20%',
   },
@@ -304,7 +241,6 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   footer: {
-    //backgroundColor: 'blue',
     width: '100%',
     height: '15%',
     alignItems: 'center',
